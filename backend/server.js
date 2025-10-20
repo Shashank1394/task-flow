@@ -17,8 +17,33 @@ app.get("/", (req, res) => {
   res.send("TaskFlow API running!");
 });
 
-app.post("/login", (req, res) => {
-  res.send("Login");
+// LOGIN route
+app.post("/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    // finding the user
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // checking the password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(401).json({ message: "Invalid credentials" });
+
+    res.json({
+      message: "Login successful",
+      user: {
+        id: user._id,
+        fullname: user.fullname,
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    resizeTo.status(500).json({ message: "Server error" });
+  }
 });
 
 // REGISTER route

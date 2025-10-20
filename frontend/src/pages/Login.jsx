@@ -20,7 +20,7 @@ const Login = () => {
       if (res.ok) {
         alert("Login successful");
         console.log("User: ", data.user);
-        navigate("/");
+        navigate("/dashboard");
       } else {
         alert(data.message);
       }
